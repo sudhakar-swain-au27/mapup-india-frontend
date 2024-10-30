@@ -1,3 +1,4 @@
+import React, { useMemo } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -20,57 +21,63 @@ ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, Title, T
  * @param {Array} props.pageData - Array of data points to be visualized in the chart.
  * @returns {JSX.Element} The rendered line chart.
  */
-export default function AnalyticsChart({ pageData }) {
-  // Generate chart data from pageData
-  const chartData = {
-    labels: pageData.map(entry => new Date(entry.date).toISOString().split('T')[0]), // Format date for labels
-    datasets: [
-      {
-        label: 'Open',
-        data: pageData.map(entry => entry.open),
-        borderColor: 'rgba(75, 192, 192, 1)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        fill: true,
-        lineTension: 0.3,
-      },
-      {
-        label: 'High',
-        data: pageData.map(entry => entry.high),
-        borderColor: 'rgba(255, 99, 132, 1)',
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        fill: true,
-        lineTension: 0.3,
-      },
-      {
-        label: 'Low',
-        data: pageData.map(entry => entry.low),
-        borderColor: 'rgba(54, 162, 235, 1)',
-        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-        fill: true,
-        lineTension: 0.3,
-      },
-      {
-        label: 'Close',
-        data: pageData.map(entry => entry.close),
-        borderColor: 'rgba(102, 51, 153, 1)',
-        backgroundColor: 'rgba(102, 51, 153, 0.2)',
-        fill: true,
-        lineTension: 0.3,
-      },
-      {
-        label: 'Volume',
-        data: pageData.map(entry => entry.volume),
-        borderColor: 'rgba(255, 206, 86, 1)',
-        backgroundColor: 'rgba(255, 206, 86, 0.2)',
-        fill: true,
-        lineTension: 0.3,
-        yAxisID: 'y1', // Separate scale for Volume
-      },
-    ],
-  };
+const AnalyticsChart = React.memo(({ pageData }) => {
+  
+  const chartData = useMemo(() => {
+    if (!Array.isArray(pageData) || pageData.length === 0) {
+      return { labels: [], datasets: [] }; // Return empty data if pageData is not valid
+    }
+
+    return {
+      labels: pageData.map(entry => new Date(entry.date).toISOString().split('T')[0]), 
+      datasets: [
+        {
+          label: 'Open',
+          data: pageData.map(entry => entry.open),
+          borderColor: 'rgba(75, 192, 192, 1)',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          fill: true,
+          lineTension: 0.3,
+        },
+        {
+          label: 'High',
+          data: pageData.map(entry => entry.high),
+          borderColor: 'rgba(255, 99, 132, 1)',
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          fill: true,
+          lineTension: 0.3,
+        },
+        {
+          label: 'Low',
+          data: pageData.map(entry => entry.low),
+          borderColor: 'rgba(54, 162, 235, 1)',
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          fill: true,
+          lineTension: 0.3,
+        },
+        {
+          label: 'Close',
+          data: pageData.map(entry => entry.close),
+          borderColor: 'rgba(102, 51, 153, 1)',
+          backgroundColor: 'rgba(102, 51, 153, 0.2)',
+          fill: true,
+          lineTension: 0.3,
+        },
+        {
+          label: 'Volume',
+          data: pageData.map(entry => entry.volume),
+          borderColor: 'rgba(255, 206, 86, 1)',
+          backgroundColor: 'rgba(255, 206, 86, 0.2)',
+          fill: true,
+          lineTension: 0.3,
+          yAxisID: 'y1', // Separate scale for Volume
+        },
+      ],
+    };
+  }, [pageData]);
 
   // Define chart options for customization
-  const chartOptions = {
+  const chartOptions = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -157,9 +164,9 @@ export default function AnalyticsChart({ pageData }) {
         },
       },
     },
-  };
+  }), []);
 
-  // Render the Line chart within a responsive container
+
   return (
     <div className="mt-4 w-full">
       <h2 className="text-2xl font-bold mb-4 text-center text-blue-600">Analytics</h2>
@@ -168,4 +175,6 @@ export default function AnalyticsChart({ pageData }) {
       </div>
     </div>
   );
-}
+});
+
+export default AnalyticsChart;
